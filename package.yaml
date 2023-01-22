@@ -24,6 +24,8 @@ dependencies:
 - text
 - random
 - containers
+- Decimal
+- mtl
 
 ghc-options:
 - -Wall

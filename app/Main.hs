@@ -1,7 +1,12 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main (main) where
 
 import Demo
-import PrettyPrint (prettyProject)
+import PrettyPrint (prettyProject, prettyReport)
+import Reporting
 
 main :: IO ()
-main = putStrLn (prettyProject someProject)
+main = do 
+    pr      <- calculateProjectReport someProject
+    putStrLn (prettyProject prettyReport prettyReport pr)

@@ -1,8 +1,13 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Reporting where
 
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Writer (listen, runWriterT, tell)
 import Data.Monoid (getSum)
 import qualified Database as DB
 import Project
+import Project (ProjectId)
 
 data Report = Report
     { budgetProfit :: Money
@@ -31,6 +36,13 @@ calculateReport budget transactions =
     asProfit (Sale m) = pure m
     asProfit (Purchase m) = pure (negate m)
 
-calculateProjectReport :: Project -> IO Report
-calculateProjectReport (Project p _) = calculateReport <$> DB.getBudget p <*> DB.getTransactions p
-calculateProjectReport (ProjectGroup _ projects) = foldMap calculateProjectReport projects
+calculateProjectReport :: Project g ProjectId -> IO (Project Report Report)
+calculateProjectReport project = fst <$> runWriterT (calc project)
+  where
+    calc (Project name p) = do
+        report <- liftIO (calculateReport <$> DB.getBudget p <*> DB.getTransactions p)
+        tell report
+        pure (Project name report)
+    calc (ProjectGroup name _ projects) = do
+        (projects', report) <- listen (mapM calc projects)
+        pure (ProjectGroup name report projects')

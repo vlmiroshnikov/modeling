@@ -2,24 +2,30 @@
 
 module PrettyPrint where
 
-import qualified Data.Text as Text
+import Data.Decimal (roundTo)
 import Data.Tree
 import Text.Printf
 
 import Project
 import Reporting
 
-asTree :: Project -> Tree String
-asTree (Project (ProjectId pid) name) = Node (printf "%s (%d)" name pid) []
-asTree (ProjectGroup name projects) = Node (Text.unpack name) (map asTree projects)
+asTree :: (g -> String) -> (a -> String) -> Project g a -> Tree String
+asTree _ prettyValue (Project name x) = Node (printf "%s %s" name (prettyValue x)) []
+asTree prettyGroup prettyValue (ProjectGroup name g projects) =
+    Node (printf "%s %s" name (prettyGroup g)) (map (asTree prettyGroup prettyValue) projects)
 
-prettyProject :: Project -> String
-prettyProject = drawTree . asTree
+prettyProject :: (g -> String) -> (a -> String) -> Project g a -> String
+prettyProject prettyGroup prettyValue = drawTree . asTree prettyGroup prettyValue
+
+prettyMoney :: Money -> String
+prettyMoney (Money d) = sign ++ show (roundTo 2 d)
+  where
+    sign = if d > 0 then "+" else ""
 
 prettyReport :: Report -> String
 prettyReport r =
     printf
-        "Budget: %.2f, Net: %.2f, Difference: %+.2f"
-        (unMoney (budgetProfit r))
-        (unMoney (netProfit r))
-        (unMoney (difference r))
+        "Budget: %s, Net: %s, Difference: %s"
+        (prettyMoney (budgetProfit r))
+        (prettyMoney (netProfit r))
+        (prettyMoney (difference r))

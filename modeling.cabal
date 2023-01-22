@@ -36,8 +36,10 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      Decimal
+    , base >=4.7 && <5
     , containers
+    , mtl
     , random
     , text
   default-language: Haskell2010
@@ -50,9 +52,11 @@ executable modeling-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      Decimal
+    , base >=4.7 && <5
     , containers
     , modeling
+    , mtl
     , random
     , text
   default-language: Haskell2010
@@ -66,9 +70,11 @@ test-suite modeling-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      Decimal
+    , base >=4.7 && <5
     , containers
     , modeling
+    , mtl
     , random
     , text
   default-language: Haskell2010
