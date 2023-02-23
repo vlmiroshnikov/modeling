@@ -3,7 +3,7 @@
 module PrettyPrint where
 
 import Data.Decimal (roundTo)
-import Data.Tree ( drawTree, Tree(Node) )
+import Data.Tree (Tree (Node), drawTree)
 import Text.Printf
 
 import Project
